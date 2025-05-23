@@ -75,25 +75,36 @@ class data_controller extends \core_customfield\data_controller {
     public function instance_form_definition(\MoodleQuickForm $mform) {
         $field = $this->get_field();
         $config = $field->get('configdata');
-        $options = field_controller::get_options_array($field,$this->get_field()->get_configdata_property('multiselect'));
+
         $formattedoptions = array();
         $attributes = array();
         if ($this->get_field()->get_configdata_property('multiselect')) {
             $attributes = array('multiple' => true);
         }
-        $context = $this->get_field()->get_handler()->get_configuration_context();
-        foreach ($options as $key => $option) {
-            // Multilang formatting with filters.
-            $formattedoptions[$key] = format_string($option, true, ['context' => $context]);
-        }
+
 
         $elementtype = 'select';
         if ($this->get_field()->get_configdata_property('autocomplete')) {
             $elementtype = 'autocomplete';
+            $elementname = $this->get_form_element_name();
+            $attributes['ajax'] = 'customfield_dynamic/form_dynamic_options';
+            $attributes['data-instance'] = $field->get('id');
+            $mform->addElement($elementtype, $elementname, $this->get_field()->get_formatted_name(),
+               [ ], $attributes);
         }
-        $elementname = $this->get_form_element_name();
-        $mform->addElement($elementtype, $elementname, $this->get_field()->get_formatted_name(),
-        $formattedoptions, $attributes);
+        else{
+            $options = field_controller::get_options_array($field,$this->get_field()->get_configdata_property('multiselect'));
+            $context = $this->get_field()->get_handler()->get_configuration_context();
+            foreach ($options as $key => $option) {
+                // Multilang formatting with filters.
+                $formattedoptions[$key] = format_string($option, true, ['context' => $context]);
+            }
+
+            $elementname = $this->get_form_element_name();
+            $mform->addElement($elementtype, $elementname, $this->get_field()->get_formatted_name(),
+                $formattedoptions, $attributes);
+        }
+
 
         if ($field->get_configdata_property('required')) {
             $mform->addRule($elementname, null, 'required', null, 'client');

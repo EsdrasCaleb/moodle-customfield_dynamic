@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of the mod_coursecertificate plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,17 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Customfield dynamic Type
+ * Coursecertificate module webservice functions.
  *
- * @package   customfield_dynamic
- * @copyright 2020 Sooraj Singh
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     mod_coursecertificate
+ * @copyright   2020 Mikel Martín <mikel@moodle.com>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'customfield_dynamic';
-$plugin->version   = 2025052316;
-$plugin->requires  = 2019051100;
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = 'Version for Moodle 3.7 onwards';
+$functions = [
+    'customfield_dynamic_form_dynamic_options' => [
+        'classname' => customfield_dynamic\external\get_dynamic_options::class,
+        'methodname'  => 'get_options',
+        'description' => 'Retorna opções para o autocomplete.',
+        'type'        => 'read',
+        'ajax'        => true,
+        'loginrequired' => true,
+    ],
+];
