@@ -85,12 +85,22 @@ class data_controller extends \core_customfield\data_controller {
 
         $elementtype = 'select';
         if ($this->get_field()->get_configdata_property('autocomplete')) {
+            $context = $this->get_field()->get_handler()->get_configuration_context();
+            $options = field_controller::get_options_array($field,$field->get_configdata_property('multiselect'));
+            $data = explode(',',$this->get_value());
+            foreach ($options as $key => $option) {
+                // Multilang formatting with filters.
+                if(in_array($key, $data)) {
+                    $formattedoptions[$key] = format_string($option, true, ['context' => $context]);
+                }
+            }
+
             $elementtype = 'autocomplete';
             $elementname = $this->get_form_element_name();
             $attributes['ajax'] = 'customfield_dynamic/form_dynamic_options';
             $attributes['data-instance'] = $field->get('id');
             $mform->addElement($elementtype, $elementname, $this->get_field()->get_formatted_name(),
-               [ ], $attributes);
+                $formattedoptions, $attributes);
         }
         else{
             $options = field_controller::get_options_array($field,$this->get_field()->get_configdata_property('multiselect'));
